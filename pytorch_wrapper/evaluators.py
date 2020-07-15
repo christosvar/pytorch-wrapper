@@ -342,18 +342,20 @@ class MultiClassPrecisionEvaluator(AbstractEvaluator):
     Multi-Class Precision evaluator.
     """
 
-    def __init__(self, model_output_key=None, batch_target_key='target', average='macro'):
+    def __init__(self, model_output_key=None, batch_target_key='target', average='macro', labels=None):
         """
         :param model_output_key: Key where the dict returned by the model contains the actual predictions. Leave None
             if the model returns only the predictions.
         :param batch_target_key: Key where the dict (batch) contains the target values.
         :param average: Type ['macro' or 'micro'] of averaging performed on the results.
+        :param labels: The set of labels to include when calculating a multiclass average
         """
 
         super(MultiClassPrecisionEvaluator, self).__init__()
         self._model_output_key = model_output_key
         self._batch_target_key = batch_target_key
         self._average = average
+        self._labels = labels
         self.reset()
 
     def reset(self):
@@ -372,7 +374,8 @@ class MultiClassPrecisionEvaluator(AbstractEvaluator):
         return GenericEvaluatorResults(metrics.precision_score(
             y_pred=np.array(self._outputs).argmax(axis=-1),
             y_true=np.array(self._targets),
-            average=self._average
+            average=self._average,
+            labels=self._labels
         ), self._average + '-precision', '%5.4f', is_max_better=True)
 
 
@@ -422,18 +425,20 @@ class MultiClassRecallEvaluator(AbstractEvaluator):
     Multi-Class Recall evaluator.
     """
 
-    def __init__(self, model_output_key=None, batch_target_key='target', average='macro'):
+    def __init__(self, model_output_key=None, batch_target_key='target', average='macro', labels=None):
         """
         :param model_output_key: Key where the dict returned by the model contains the actual predictions. Leave None
             if the model returns only the predictions.
         :param batch_target_key: Key where the dict (batch) contains the target values.
         :param average: Type ['macro' or 'micro'] of averaging performed on the results.
+        :param labels: The set of labels to include when calculating a multiclass average
         """
 
         super(MultiClassRecallEvaluator, self).__init__()
         self._model_output_key = model_output_key
         self._batch_target_key = batch_target_key
         self._average = average
+        self._labels = labels
         self.reset()
 
     def reset(self):
@@ -452,7 +457,8 @@ class MultiClassRecallEvaluator(AbstractEvaluator):
         return GenericEvaluatorResults(metrics.recall_score(
             y_pred=np.array(self._outputs).argmax(axis=-1),
             y_true=np.array(self._targets),
-            average=self._average
+            average=self._average,
+            labels=self._labels
         ), self._average + '-recall', '%5.4f', is_max_better=True)
 
 
@@ -502,18 +508,20 @@ class MultiClassF1Evaluator(AbstractEvaluator):
     Multi-Class F1 evaluator.
     """
 
-    def __init__(self, model_output_key=None, batch_target_key='target', average='macro'):
+    def __init__(self, model_output_key=None, batch_target_key='target', average='macro', labels=None):
         """
         :param model_output_key: Key where the dict returned by the model contains the actual predictions. Leave None
             if the model returns only the predictions.
         :param batch_target_key: Key where the dict (batch) contains the target values.
         :param average: Type ['macro' or 'micro'] of averaging performed on the results.
+        :param labels: The set of labels to include when calculating a multiclass average
         """
 
         super(MultiClassF1Evaluator, self).__init__()
         self._model_output_key = model_output_key
         self._batch_target_key = batch_target_key
         self._average = average
+        self._labels = labels
         self.reset()
 
     def reset(self):
@@ -532,7 +540,8 @@ class MultiClassF1Evaluator(AbstractEvaluator):
         return GenericEvaluatorResults(metrics.f1_score(
             y_pred=np.array(self._outputs).argmax(axis=-1),
             y_true=np.array(self._targets),
-            average=self._average
+            average=self._average,
+            labels=self._labels
         ), self._average + '-f1', '%5.4f', is_max_better=True)
 
 

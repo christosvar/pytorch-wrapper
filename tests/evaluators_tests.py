@@ -323,6 +323,40 @@ class MultiClassPrecisionEvaluatorTestCase(unittest.TestCase):
 
         self.assertAlmostEqual(res.score, correct)
 
+    def test_correct_score_calculation_labels(self):
+        y_true = [0, 0, 1, 1, 2, 2, 2, 2]
+        y_pred = [0, 1, 1, 2, 2, 1, 1, 0]
+        output = [
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 1.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [1.0, 0.0, 0.0],
+        ]
+
+        for labels in [None, [0, 1]]:
+            for average in ['micro', 'macro']:
+                correct = metrics.precision_score(y_pred=np.array(y_pred), y_true=np.array(y_true), average=average,
+                                                  labels=labels)
+
+                evaluator = evaluators.MultiClassPrecisionEvaluator(
+                    model_output_key=None,
+                    batch_target_key='target',
+                    average=average,
+                    labels=labels
+                )
+
+                output_t = torch.tensor(output, dtype=torch.float32)
+                batch = {'target': torch.tensor(y_true, dtype=torch.float32)}
+                evaluator.step(output_t, batch)
+
+                res = evaluator.calculate()
+
+                self.assertAlmostEqual(res.score, correct)
+
 
 class RecallEvaluatorTestCase(unittest.TestCase):
 
